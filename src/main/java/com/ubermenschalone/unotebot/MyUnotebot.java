@@ -1,11 +1,10 @@
 package com.ubermenschalone.unotebot;
 
+import com.ubermenschalone.unotebot.botapi.TelegramFacade;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class MyUnotebot extends TelegramWebhookBot {
 
@@ -13,23 +12,18 @@ public class MyUnotebot extends TelegramWebhookBot {
     private String botToken;
     private String webHookPath;
 
-    public MyUnotebot(DefaultBotOptions botOptions){super(botOptions);}
+    private TelegramFacade telegramFacade;
+
+    public MyUnotebot(DefaultBotOptions botOptions, TelegramFacade telegramFacade){
+        super(botOptions);
+        this.telegramFacade = telegramFacade;
+    }
 
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-
-        if(update.getMessage() != null && update.getMessage().hasText()){
-            long chat_id = update.getMessage().getChatId();
-
-            try{
-                execute(new SendMessage(chat_id, "Hello, " + update.getMessage().getText()));
-            } catch (TelegramApiException e){
-                e.printStackTrace();
-            }
-        }
-
-        return null;
+        final BotApiMethod<?> replyMessageToUser = telegramFacade.handleUpdate(update);
+        return replyMessageToUser;
     }
 
     @Override
