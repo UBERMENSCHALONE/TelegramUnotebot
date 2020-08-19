@@ -1,7 +1,8 @@
-package com.ubermenschalone.unotebot.botapi.handlers.start;
+package com.ubermenschalone.unotebot.botapi.handlers;
 
 import com.ubermenschalone.unotebot.botapi.BotState;
 import com.ubermenschalone.unotebot.botapi.InputMessageHandler;
+import com.ubermenschalone.unotebot.cache.UserDataCache;
 import com.ubermenschalone.unotebot.service.ReplyMessagesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,10 +17,11 @@ import java.util.List;
 @Slf4j
 @Component
 public class StartHandler implements InputMessageHandler {
-
+    private UserDataCache userDataCache;
     private ReplyMessagesService messagesService;
 
-    public StartHandler(ReplyMessagesService messagesService){
+    public StartHandler(UserDataCache userDataCache, ReplyMessagesService messagesService){
+        this.userDataCache = userDataCache;
         this.messagesService = messagesService;
     }
 
@@ -35,9 +37,10 @@ public class StartHandler implements InputMessageHandler {
 
     private SendMessage processUsersInput(Message inputMsg) {
         long chatId = inputMsg.getChatId();
+        int userId = inputMsg.getFrom().getId();
         SendMessage replyToUser = messagesService.getReplyMessage(chatId, "reply.firstStart");
         replyToUser.setReplyMarkup(getInLineMessageButtons());
-
+        userDataCache.setUsersCurrentBotState(userId, BotState.ADD_NOTE);
         return replyToUser;
     }
 

@@ -4,13 +4,15 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 
+// Модель пользователя
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
-    int mUserId;
-    String mName;
+    private int mUserId;
+    private String mName;
     private LinkedHashMap<String, Note> mNotes = new LinkedHashMap<>();
 
     public User(int userId){
@@ -19,20 +21,42 @@ public class User {
 
     public void addNote(String noteText){
         UUID uuid = UUID.randomUUID();
-        String randomUUIDString = uuid.toString();
-        Note note = new Note(noteText);
-        mNotes.put(randomUUIDString, note);
+        String id = uuid.toString();
+        Note note = new Note(id, noteText);
+        mNotes.put(id, note);
+    }
+
+    public void removeNote(String text){
+        for(Map.Entry<String, Note> pair : mNotes.entrySet()){
+            Note value = pair.getValue();
+            if(value.getmNote().contains(text)){
+                mNotes.remove(value.getmNoteId());
+            }
+        }
+    }
+
+    public void removeAllNotes(){
+        mNotes.clear();
     }
 
     public LinkedHashMap<String, Note> getNotes(){
         return mNotes;
     }
-
-    public String getmName() {
-        return mName;
-    }
-
-    public void setmName(String mName) {
-        this.mName = mName;
-    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

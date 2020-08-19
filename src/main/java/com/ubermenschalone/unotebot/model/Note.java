@@ -3,12 +3,16 @@ package com.ubermenschalone.unotebot.model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+// Модель заметки
+
 public class Note {
+    private String mNoteId;
     private String mNote;
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("yy.MM.dd HH:mm");
 
-    public Note(String note){
+    public Note(String randomUUIDString, String note){
+        this.mNoteId = randomUUIDString;
         this.mNote = note;
     }
 
@@ -23,4 +27,13 @@ public class Note {
     public void setmNote(String mNote) {
         this.mNote = mNote;
     }
+
+    public String getmNoteId() {
+        return mNoteId;
+    }
+
+    public void setmNoteId(String mNoteId) {
+        this.mNoteId = mNoteId;
+    }
+
 }

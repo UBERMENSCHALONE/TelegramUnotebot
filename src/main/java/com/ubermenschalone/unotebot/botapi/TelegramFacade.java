@@ -7,9 +7,11 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import com.ubermenschalone.unotebot.model.User;
 
 @Component
 @Slf4j
@@ -19,17 +21,17 @@ public class TelegramFacade {
     private UserDataCache userDataCache;
     private MainMenuService mainMenuService;
 
-    public TelegramFacade(BotStateContext botStateContext, UserDataCache userDataCache, MainMenuService mainMenuService){
+    public TelegramFacade(BotStateContext botStateContext, UserDataCache userDataCache, MainMenuService mainMenuService) {
         this.botStateContext = botStateContext;
         this.userDataCache = userDataCache;
         this.mainMenuService = mainMenuService;
     }
 
-    public BotApiMethod<?> handleUpdate(Update update){
+    public BotApiMethod<?> handleUpdate(Update update) {
         SendMessage replyMessage = null;
 
 
-        if(update.hasCallbackQuery()){
+        if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             log.info("New callbackQuery from User: {}, userId: {}, with data: {}", update.getCallbackQuery().getFrom().getUserName(),
                     callbackQuery.getFrom().getId(), update.getCallbackQuery().getData());
@@ -38,7 +40,7 @@ public class TelegramFacade {
 
 
         Message message = update.getMessage();
-        if(message != null && message.hasText()){
+        if (message != null && message.hasText()) {
             log.info("New message from User:{}, chatId: {},  with text: {}", message.getFrom().getUserName(), message.getChatId(), message.getText());
             replyMessage = handleInputMessage(message);
         }
@@ -46,7 +48,7 @@ public class TelegramFacade {
         return replyMessage;
     }
 
-    private SendMessage handleInputMessage(Message message) {
+    public SendMessage handleInputMessage(Message message) {
         String inputMsg = message.getText();
         int userId = message.getFrom().getId();
         BotState botState;
@@ -57,21 +59,22 @@ public class TelegramFacade {
                 botState = BotState.FIRST_START;
                 log.info("FIRST_START");
                 break;
-            case "Помощь":
-                botState = BotState.SHOW_HELP_MENU;
-                log.info("SHOW_HELP_MENU");
+            case "/show_all_commands":
+                botState = BotState.SHOW_COMMANDS;
                 break;
+            case "/show_menu_buttons":
+                botState = BotState.SHOW_MENU_BUTTONS;
+                break;
+            case "/show_list":
             case "\uD83D\uDDD2   Мои заметки":
                 botState = BotState.ALL_NOTES;
-                log.info("ALL_NOTES");
                 break;
+            case "/edit_list":
             case "✏️   Редактировать":
                 botState = BotState.EDIT_NOTE;
-                log.info("EDIT_NOTE");
                 break;
-            case "Нет, спасибо":
-                botState = BotState.DONT_USE;
-                log.info("DONT_USE");
+            case "/delete_all_list":
+                botState = BotState.DELETE_ALL_NOTES;
                 break;
             default:
                 botState = BotState.ADD_NOTE;
@@ -85,23 +88,28 @@ public class TelegramFacade {
         return replyMessage;
     }
 
-    private BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery){
+    private BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
         final long chatId = buttonQuery.getMessage().getChatId();
         final int userId = buttonQuery.getFrom().getId();
-        BotApiMethod<?> callBackAnswer = mainMenuService.getMainMenuMessage(chatId, "Чтобы эффективно пользоваться ботом, воспользуйтесь кнопками меню ↘️");
+        BotApiMethod<?> callBackAnswer = null;
 
-        if(buttonQuery.getData().equals("buttonYes")){
-            userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_HELP_MENU);
-        } else if(buttonQuery.getData().equals("buttonNo")){
+        if (buttonQuery.getData().equals("buttonYes")) {
+            callBackAnswer = mainMenuService.getMainMenuMessage(chatId, "Чтобы эффективно пользоваться ботом, воспользуйтесь кнопками меню ↘️");
+        } else if (buttonQuery.getData().equals("buttonNo")) {
             callBackAnswer = sendAnswerCallbackQuery("Возвращайтесь, когда будете готовы", false, buttonQuery);
-            userDataCache.setUsersCurrentBotState(userId, BotState.DONT_USE);
-        } else {
-            userDataCache.setUsersCurrentBotState(userId, BotState.SHOW_HELP_MENU);
+        } else if (buttonQuery.getData().equals("buttonDelete")) {
+            SendCustomMessages sendCustomMessages = new SendCustomMessages();
+            sendCustomMessages.sendEmptyMessage(chatId, buttonQuery.getMessage().getMessageId());
+            String text = buttonQuery.getMessage().getText().substring(3, buttonQuery.getMessage().getText().length() - 30);
+            callBackAnswer = sendAnswerCallbackQuery("Заметка успешна удалена", true, buttonQuery);
+            User user = userDataCache.getUserProfileData(userId);
+            user.removeNote(text);
+            userDataCache.setUsersCurrentBotState(userId, BotState.EDIT_NOTE);
         }
         return callBackAnswer;
     }
 
-    private AnswerCallbackQuery sendAnswerCallbackQuery(String text, boolean alert, CallbackQuery callbackQuery){
+    private AnswerCallbackQuery sendAnswerCallbackQuery(String text, boolean alert, CallbackQuery callbackQuery) {
         AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
         answerCallbackQuery.setCallbackQueryId(callbackQuery.getId());
         answerCallbackQuery.setShowAlert(alert);

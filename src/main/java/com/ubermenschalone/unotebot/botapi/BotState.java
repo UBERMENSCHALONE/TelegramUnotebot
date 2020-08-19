@@ -5,6 +5,7 @@ public enum BotState {
     ADD_NOTE,
     EDIT_NOTE,
     ALL_NOTES,
-    SHOW_HELP_MENU,
-    DONT_USE;
+    DELETE_ALL_NOTES,
+    SHOW_COMMANDS,
+    SHOW_MENU_BUTTONS;
 }

@@ -6,6 +6,8 @@ import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+//Создание бота, подключение к нему вебхука
+
 public class MyUnotebot extends TelegramWebhookBot {
 
     private String botUserName;
@@ -18,7 +20,6 @@ public class MyUnotebot extends TelegramWebhookBot {
         super(botOptions);
         this.telegramFacade = telegramFacade;
     }
-
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {

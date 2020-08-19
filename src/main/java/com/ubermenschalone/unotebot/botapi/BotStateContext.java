@@ -44,11 +44,12 @@ public class BotStateContext {
             case ADD_NOTE:
             case EDIT_NOTE:
             case ALL_NOTES:
-            case SHOW_HELP_MENU:
+            case SHOW_COMMANDS:
+            case DELETE_ALL_NOTES:
+            case SHOW_MENU_BUTTONS:
                 return true;
             default:
             case FIRST_START:
-            case DONT_USE:
                 return false;
         }
     }
