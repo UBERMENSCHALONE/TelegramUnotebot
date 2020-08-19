@@ -25,3 +25,15 @@
 /show_list | Показать все заметки
 /edit_list | Редактировать заметки
 /delete_all_list | Удалить все заметки
+
+<H1 align="center"><b>Скриншоты:</b></H1>
+
+ 
+<p align="center">
+<img src="https://github.com/UBERMENSCHALONE/Resources/blob/master/SimpleBottomNavigationActivity/1.jpg?raw=true" alt="drawing" width="250"/><br>
+<img src="https://github.com/UBERMENSCHALONE/Resources/blob/master/SimpleBottomNavigationActivity/2.jpg?raw=true" alt="drawing" width="250"/><br>
+<img src="https://github.com/UBERMENSCHALONE/Resources/blob/master/SimpleBottomNavigationActivity/3.jpg?raw=true" alt="drawing" width="250"/><br>
+<img src="https://github.com/UBERMENSCHALONE/Resources/blob/master/SimpleBottomNavigationActivity/4.jpg?raw=true" alt="drawing" width="250"/><br>
+<img src="https://github.com/UBERMENSCHALONE/Resources/blob/master/SimpleBottomNavigationActivity/5.jpg?raw=true" alt="drawing" width="250"/><br>
+<img src="https://github.com/UBERMENSCHALONE/Resources/blob/master/SimpleBottomNavigationActivity/6.jpg?raw=true" alt="drawing" width="250"/><br>
+</p>
