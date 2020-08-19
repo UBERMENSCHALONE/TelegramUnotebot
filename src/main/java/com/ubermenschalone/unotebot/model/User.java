@@ -43,20 +43,3 @@ public class User {
         return mNotes;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

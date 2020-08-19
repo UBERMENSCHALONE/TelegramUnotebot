@@ -28,11 +28,11 @@ public class UserDataCache implements DataCache {
 
     @Override
     public User getUserProfileData(int userId) {
-        User userProfileData = usersProfileData.get(userId);
-        if(userProfileData == null){
-            userProfileData = new User(userId);
+        User user = usersProfileData.get(userId);
+        if(user == null){
+            user = new User(userId);
         }
-        return userProfileData;
+        return user;
     }
 
     @Override
